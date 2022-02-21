@@ -1,0 +1,33 @@
+name: Firebase functions deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          check-latest: true
+      - name: Install npm packages
+        run: |
+          cd functions
+          yarn install
+      - name: Deploy to Firebase test
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only functions -P test
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY_TEST }}
+      - name: Deploy to Firebase prod
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only functions -P default
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
