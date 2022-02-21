@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "aiscope-labeling-app"
-  }
+    "default": "aiscope-labeling-app",
+    "test": "aiscope-labelling-app-test"
+  },
 }
