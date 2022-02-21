@@ -3,4 +3,5 @@
     "default": "aiscope-labeling-app",
     "test": "aiscope-labelling-app-test"
   },
+  "targets": {}
 }
