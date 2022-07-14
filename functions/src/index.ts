@@ -1,44 +1,44 @@
-import * as admin from 'firebase-admin';
-import * as functions from 'firebase-functions';
-import UserRecord = admin.auth.UserRecord;
+import * as admin from 'firebase-admin'
+import * as functions from 'firebase-functions'
+import UserRecord = admin.auth.UserRecord
 
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp(functions.config().firebase)
 
-const db = admin.firestore();
+const db = admin.firestore()
 
 export const onNewUserCreated = functions
-    .region("europe-west1")
-    .auth
-    .user()
-    .onCreate(async (user) => {
-        return saveMicroscopistToFirestore(user)
-            .catch(error => {
-                functions.logger.error("Error writing document: ", error);
-            });
-    });
+  .region('europe-west1')
+  .auth.user()
+  .onCreate(async (user) => {
+    return saveMicroscopistToFirestore(user).catch((error) => {
+      functions.logger.error('Error writing document: ', error)
+    })
+  })
 
-const saveMicroscopistToFirestore = (user: UserRecord) => db.collection("microscopists")
+const saveMicroscopistToFirestore = (user: UserRecord) =>
+  db
+    .collection('microscopists')
     .doc(user.uid)
     .set({
-        enabled: false
+      enabled: false,
     })
     .then(function () {
-        functions.logger.log("Document successfully written!");
-    });
-
- export const onNewFacilityCreated = functions
-  .region("europe-west1")
-  .firestore
-  .document("facilities/{facility}")
-  .onCreate(async (snapshot) => {
-    return snapshot.ref.set({
-      microscopists: [],
-      name: "___NAME HERE___"
+      functions.logger.log('Document successfully written!')
     })
-      .then(function () {
-        functions.logger.log("Document successfully written!");
+
+export const onNewFacilityCreated = functions
+  .region('europe-west1')
+  .firestore.document('facilities/{facility}')
+  .onCreate(async (snapshot) => {
+    return snapshot.ref
+      .set({
+        microscopists: [],
+        name: '___NAME HERE___',
       })
-      .catch(error => {
-        functions.logger.error("Error writing document: ", error);
-      });
-  });
+      .then(function () {
+        functions.logger.log('Document successfully written!')
+      })
+      .catch((error) => {
+        functions.logger.error('Error writing document: ', error)
+      })
+  })
