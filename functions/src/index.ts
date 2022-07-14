@@ -10,7 +10,7 @@ export const onNewUserCreated = functions
     .region("europe-west1")
     .auth
     .user()
-    .onCreate((user, _) => {
+    .onCreate(async (user) => {
         return saveMicroscopistToFirestore(user)
             .catch(error => {
                 functions.logger.error("Error writing document: ", error);
@@ -30,7 +30,7 @@ const saveMicroscopistToFirestore = (user: UserRecord) => db.collection("microsc
   .region("europe-west1")
   .firestore
   .document("facilities/{facility}")
-  .onCreate((snapshot, _) => {
+  .onCreate(async (snapshot) => {
     return snapshot.ref.set({
       microscopists: [],
       name: "___NAME HERE___"
