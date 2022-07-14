@@ -1,7 +1,6 @@
 {
   "name": "functions",
   "scripts": {
-    "lint": "tslint --project tsconfig.json",
     "build": "tsc",
     "serve": "yarn run build && firebase serve --only functions",
     "shell": "yarn run build && firebase functions:shell",
@@ -19,7 +18,6 @@
   },
   "devDependencies": {
     "firebase-functions-test": "^0.3.3",
-    "tslint": "^6.1.2",
     "typescript": "^4.5.5"
   },
   "private": true
