@@ -4,6 +4,7 @@ import * as FacilityCreated from './facility/facility-created'
 import UserRecord = admin.auth.UserRecord
 
 admin.initializeApp()
+
 const db = admin.firestore()
 
 export const onNewUserCreated = functions
@@ -11,7 +12,6 @@ export const onNewUserCreated = functions
   .auth.user()
   .onCreate((user) => {
     try {
-      console.log('>>>>>>> New user created:', user.uid)
       return saveMicroscopistToFirestore(user)
     } catch (error) {
       functions.logger.error('Error writing document: ', error)
@@ -27,7 +27,6 @@ const saveMicroscopistToFirestore = (user: UserRecord) =>
       enabled: false,
     })
     .then(function () {
-      console.log('>>>> saveMicroscopistToFirestore called')
       functions.logger.log('Document successfully written!')
     })
 
