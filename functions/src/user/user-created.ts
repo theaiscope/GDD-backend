@@ -1,8 +1,7 @@
 import * as admin from 'firebase-admin'
 import * as functions from 'firebase-functions'
+import { db } from '../index'
 import UserRecord = admin.auth.UserRecord
-
-const db = admin.firestore()
 
 export const onNewUserCreated = functions
   .region('europe-west1')

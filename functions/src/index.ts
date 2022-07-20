@@ -1,33 +1,11 @@
 import * as admin from 'firebase-admin'
-import * as functions from 'firebase-functions'
 import * as FacilityCreated from './facility/facility-created'
-import UserRecord = admin.auth.UserRecord
+import * as UserCreated from './user/user-created'
 
 admin.initializeApp()
 
-const db = admin.firestore()
+export const db = admin.firestore()
 
-export const onNewUserCreated = functions
-  .region('europe-west1')
-  .auth.user()
-  .onCreate((user) => {
-    try {
-      return saveMicroscopistToFirestore(user)
-    } catch (error) {
-      functions.logger.error('Error writing document: ', error)
-      return null
-    }
-  })
-
-const saveMicroscopistToFirestore = (user: UserRecord) =>
-  db
-    .collection('microscopists')
-    .doc(user.uid)
-    .set({
-      enabled: false,
-    })
-    .then(function () {
-      functions.logger.log('Document successfully written!')
-    })
+export const onNewUserCreated = UserCreated.onNewUserCreated
 
 export const onNewFacilityCreated = FacilityCreated.onNewFacilityCreated
