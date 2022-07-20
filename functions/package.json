@@ -8,7 +8,7 @@
     "start": "yarn run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "test": "tsc && firebase emulators:exec --project aiscope-labelling-app-test 'jest'"
+    "test": "tsc && firebase emulators:exec --project aiscope-labelling-app-test 'jest --detectOpenHandles --forceExit'"
   },
   "engines": {
     "node": "16"
