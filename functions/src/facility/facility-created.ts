@@ -2,6 +2,9 @@ import * as functions from 'firebase-functions'
 import { Collections } from '../data/collections'
 import { db } from '../index'
 
+const DEFAULT_FACILITY_NAME = '___NAME HERE___'
+const DEFAULT_FACILITY_MICROSCOPISTS: string[] = []
+
 export const onNewFacilityCreated = functions
   .region('europe-west1')
   .firestore.document('facilities/{facility}')
@@ -14,8 +17,8 @@ const addInitialValues = async (snapshot: FirebaseFirestore.DocumentSnapshot) =>
   if (currentMicroscopist && currentName) return
 
   const valuesToInit = {
-    microscopists: currentMicroscopist ?? [],
-    name: currentName ?? '___NAME HERE___',
+    microscopists: currentMicroscopist ?? DEFAULT_FACILITY_MICROSCOPISTS,
+    name: currentName ?? DEFAULT_FACILITY_NAME,
   }
 
   return db
