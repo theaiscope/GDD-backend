@@ -1,5 +1,6 @@
 import * as admin from 'firebase-admin'
 import * as test from 'firebase-functions-test'
+import { Collections } from '../data/collections'
 import * as functions from '../index'
 import UserRecord = admin.auth.UserRecord
 
@@ -23,7 +24,7 @@ describe('UserCreated', () => {
     const wrappedOnUserCreated = test().wrap(functions.onNewUserCreated)
     await wrappedOnUserCreated(user)
 
-    const createdMicroscopist = await db.collection('microscopists').doc(user.uid).get()
+    const createdMicroscopist = await db.collection(Collections.MICROSCOPISTS).doc(user.uid).get()
 
     expect(createdMicroscopist.exists).toBeTruthy()
     expect(createdMicroscopist.get('enabled')).toBeFalsy()

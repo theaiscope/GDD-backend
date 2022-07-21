@@ -1,5 +1,6 @@
 import * as admin from 'firebase-admin'
 import * as functions from 'firebase-functions'
+import { Collections } from '../data/collections'
 import { db } from '../index'
 import UserRecord = admin.auth.UserRecord
 
@@ -14,7 +15,7 @@ export const onNewUserCreated = functions
 
 const saveMicroscopistToFirestore = (user: UserRecord) =>
   db
-    .collection('microscopists')
+    .collection(Collections.MICROSCOPISTS)
     .doc(user.uid)
     .set({
       enabled: false,

@@ -1,5 +1,6 @@
 import * as admin from 'firebase-admin'
 import * as test from 'firebase-functions-test'
+import { Collections } from '../data/collections'
 import * as functions from '../index'
 
 describe('FacilityCreated', () => {
@@ -9,7 +10,7 @@ describe('FacilityCreated', () => {
     // Create a new facility without microscopists
     const facilityId = 'id111'
     const emptyFacility = {}
-    await db.collection('facilities').doc(facilityId).create(emptyFacility)
+    await db.collection(Collections.FACILITIES).doc(facilityId).create(emptyFacility)
 
     // Call the function
     const facilitySnapshot = test().firestore.makeDocumentSnapshot(emptyFacility, `facilities/${facilityId}`)
@@ -18,7 +19,7 @@ describe('FacilityCreated', () => {
     await wrappedOnFacilityCreated(facilitySnapshot)
 
     // Check that the microscopists were initialized
-    const createdFacility = await db.collection('facilities').doc(facilityId).get()
+    const createdFacility = await db.collection(Collections.FACILITIES).doc(facilityId).get()
 
     expect(createdFacility.exists).toBeTruthy()
     expect(createdFacility.get('microscopists')).toBeDefined()
@@ -29,7 +30,7 @@ describe('FacilityCreated', () => {
     // Create a new facility without a name
     const facilityId = 'id222'
     const emptyFacility = {}
-    await db.collection('facilities').doc(facilityId).create(emptyFacility)
+    await db.collection(Collections.FACILITIES).doc(facilityId).create(emptyFacility)
 
     // Call the function
     const facilitySnapshot = test().firestore.makeDocumentSnapshot(emptyFacility, `facilities/${facilityId}`)
@@ -38,7 +39,7 @@ describe('FacilityCreated', () => {
     await wrappedOnFacilityCreated(facilitySnapshot)
 
     // Check that the name was initialized
-    const createdFacility = await db.collection('facilities').doc(facilityId).get()
+    const createdFacility = await db.collection(Collections.FACILITIES).doc(facilityId).get()
 
     expect(createdFacility.exists).toBeTruthy()
     expect(createdFacility.get('name')).toEqual('___NAME HERE___')
@@ -50,7 +51,7 @@ describe('FacilityCreated', () => {
     const facilityToCreate = {
       microscopists: ['microscopists/abc123'],
     }
-    await db.collection('facilities').doc(facilityId).create(facilityToCreate)
+    await db.collection(Collections.FACILITIES).doc(facilityId).create(facilityToCreate)
 
     // Call the function
     const facilitySnapshot = test().firestore.makeDocumentSnapshot(facilityToCreate, `facilities/${facilityId}`)
@@ -59,7 +60,7 @@ describe('FacilityCreated', () => {
     await wrappedOnFacilityCreated(facilitySnapshot)
 
     // Check that the atributes were not changed
-    const createdFacility = await db.collection('facilities').doc(facilityId).get()
+    const createdFacility = await db.collection(Collections.FACILITIES).doc(facilityId).get()
 
     expect(createdFacility.exists).toBeTruthy()
     expect(createdFacility.get('microscopists')).toEqual(facilityToCreate.microscopists)
@@ -71,7 +72,7 @@ describe('FacilityCreated', () => {
     const facilityToCreate = {
       name: 'Test Facility',
     }
-    await db.collection('facilities').doc(facilityId).create(facilityToCreate)
+    await db.collection(Collections.FACILITIES).doc(facilityId).create(facilityToCreate)
 
     // Call the function
     const snapshot = test().firestore.makeDocumentSnapshot(facilityToCreate, `facilities/${facilityId}`)
@@ -80,7 +81,7 @@ describe('FacilityCreated', () => {
     await wrappedOnFacilityCreated(snapshot)
 
     // Check that the atributes were not changed
-    const createdFacility = await db.collection('facilities').doc(facilityId).get()
+    const createdFacility = await db.collection(Collections.FACILITIES).doc(facilityId).get()
 
     expect(createdFacility.exists).toBeTruthy()
     expect(createdFacility.get('name')).toEqual(facilityToCreate.name)

@@ -1,4 +1,5 @@
 import * as functions from 'firebase-functions'
+import { Collections } from '../data/collections'
 import { db } from '../index'
 
 export const onNewFacilityCreated = functions
@@ -18,7 +19,7 @@ const addInitialValues = async (snapshot: FirebaseFirestore.DocumentSnapshot) =>
   }
 
   return db
-    .collection('facilities')
+    .collection(Collections.FACILITIES)
     .doc(snapshot.id)
     .set(valuesToInit, { merge: true })
     .then(() => {
