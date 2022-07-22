@@ -7,19 +7,13 @@ export const fetchImageToLabel = functions.https.onCall(async (_data, context) =
   if (!context.auth) {
     throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated.')
   }
-
   const labellerId = context.auth.uid
 
-  const queryResult = await db.collection(Collections.IMAGES).where(IS_COMPLETED, '==', false).orderBy(CREATED_ON).get()
-  const images = queryResult.docs
+  const imagesSnaphot = await db
+    .collection(Collections.IMAGES)
+    .where(IS_COMPLETED, '==', false)
+    .orderBy(CREATED_ON)
+    .get()
 
-  for (const image of images) {
-    if (!image.get('labellers').includes(labellerId)) {
-      return {
-        id: image.id,
-        ...image.data(),
-      }
-    }
-  }
-  return null
+  return imagesSnaphot.docs.find((image) => !image.get('labellers').includes(labellerId))
 })
