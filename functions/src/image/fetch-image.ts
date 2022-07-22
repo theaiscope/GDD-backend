@@ -1,0 +1,25 @@
+import * as functions from 'firebase-functions'
+import { db } from '..'
+import { Collections } from '../data/collections'
+import { CREATED_ON, IS_COMPLETED } from './query-constants'
+
+export const fetchImageToLabel = functions.https.onCall(async (_data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated.')
+  }
+
+  const labellerId = context.auth.uid
+
+  const queryResult = await db.collection(Collections.IMAGES).where(IS_COMPLETED, '==', false).orderBy(CREATED_ON).get()
+  const images = queryResult.docs
+
+  for (const image of images) {
+    if (!image.get('labellers').includes(labellerId)) {
+      return {
+        id: image.id,
+        ...image.data(),
+      }
+    }
+  }
+  return null
+})
