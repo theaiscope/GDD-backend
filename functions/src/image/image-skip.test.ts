@@ -74,4 +74,39 @@ describe('Skip image action', () => {
       await wrappedSubmitImage(requestData, contextOptions)
     }).rejects.toMatchObject(expectedError)
   })
+
+  it('should return an error when trying to skip an already labelled image by the user', async () => {
+    // Given a completed image
+    const imageId = 'image111'
+    const userId = 'labellerId01'
+    const sampleImage = {
+      markedAsInvalid: 0,
+      masks: [],
+      name: 'image_0.jpg',
+      skipped: 0,
+      labellers: [userId],
+      createdOn: new Date('June 13, 2022, 12:00:00'),
+      isCompleted: false,
+      sampleLocation: '1',
+      sampleReference: '1',
+    }
+    await db.collection(Collections.IMAGES).doc(imageId).create(sampleImage)
+
+    // When skip action is invoked
+    const requestData = { imageId: imageId }
+    const contextOptions = { auth: { uid: userId } }
+
+    const wrappedSubmitImage = test().wrap(functions.skipImage)
+
+    // Then an error is returned
+    const expectedError = {
+      code: 'failed-precondition',
+      message: 'Image is already labelled',
+    }
+
+    expect(async () => {
+      await wrappedSubmitImage(requestData, contextOptions)
+    }).rejects.toMatchObject(expectedError)
+  })
+
 })

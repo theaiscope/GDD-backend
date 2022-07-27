@@ -12,8 +12,12 @@ export const skipImage = functions.region('europe-west1').https.onCall(async (da
   if (image.get('isCompleted')) {
     throw new functions.https.HttpsError('failed-precondition', 'Image is already completed')
   }
-
+  
   const labellerId = context.auth.uid
+  if (image.get('labellers').includes(labellerId)) {
+    throw new functions.https.HttpsError('failed-precondition', 'Image is already labelled')
+  }
+
   const labellers = [...image.get('labellers'), labellerId]
 
   return db
