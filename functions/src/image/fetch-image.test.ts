@@ -10,8 +10,8 @@ describe('FetchImage', () => {
   const contextOptions = { auth: { uid: testUserId } }
   const fetchImageFunction = test().wrap(functions.fetchImageToLabel)
 
-  afterEach((done) => {
-    clearTestData().then(() => done())
+  beforeEach(async () => {
+    await test().firestore.clearFirestoreData('aiscope-labelling-app-test')
   })
 
   it('should not return an image when there is no image', async () => {
@@ -72,15 +72,5 @@ describe('FetchImage', () => {
         sampleReference: '/samples/sample_reference',
         createdOn: new Date(),
         ...initialData,
-      })
-
-  const clearTestData = () =>
-    db
-      .collection(Collections.IMAGES)
-      .get()
-      .then((snapshot) => {
-        snapshot.docs.forEach(async (doc) => {
-          await doc.ref.delete()
-        })
       })
 })
