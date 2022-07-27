@@ -19,7 +19,7 @@ describe('Skip image action', () => {
       masks: [],
       name: 'image_0.jpg',
       skipped: 0,
-      labellers: [],
+      labellers: null,
       createdOn: new Date('June 13, 2022, 12:00:00'),
       isCompleted: false,
       sampleLocation: '1',
