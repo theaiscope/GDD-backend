@@ -76,7 +76,7 @@ describe('Skip image action', () => {
   })
 
   it('should return an error when trying to skip an already labelled image by the user', async () => {
-    // Given a completed image
+    // Given an image labelled by the user
     const imageId = 'image111'
     const userId = 'labellerId01'
     const sampleImage = {
@@ -109,4 +109,23 @@ describe('Skip image action', () => {
     }).rejects.toMatchObject(expectedError)
   })
 
+  it('should return an error when trying to skip an image that does not exist', async () => {
+    // Given an non-existing image
+    const imageId = 'image111'
+
+    // When skip action is invoked
+    const requestData = { imageId: imageId }
+    const contextOptions = { auth: { uid: 'labellerId01' } }
+
+    const wrappedSubmitImage = test().wrap(functions.skipImage)
+
+    // Then an error is returned
+    const expectedError = {
+      code: 'not-found',
+    }
+
+    expect(async () => {
+      await wrappedSubmitImage(requestData, contextOptions)
+    }).rejects.toMatchObject(expectedError)
+  })
 })
