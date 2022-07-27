@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions'
 import { db } from '..'
-import { Collections } from '../data/collections'
+import { Collections } from '../model/collections'
 import { CREATED_ON, IS_COMPLETED } from './query-constants'
 
 export const fetchImageToLabel = functions.https.onCall(async (_data, context) => {
