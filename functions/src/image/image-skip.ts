@@ -1,4 +1,5 @@
 import * as functions from 'firebase-functions'
+import { DocumentSnapshot } from 'firebase-functions/v1/firestore'
 import { Collections } from '../data/collections'
 import { db } from '../index'
 
@@ -8,19 +9,9 @@ export const skipImage = functions.region('europe-west1').https.onCall(async (da
   }
 
   const image = await db.collection(Collections.IMAGES).doc(data.imageId).get()
-
-  if (!image.exists) {
-    throw new functions.https.HttpsError('not-found', 'Image does not exist.')
-  }
-
-  if (image.get('isCompleted')) {
-    throw new functions.https.HttpsError('failed-precondition', 'Image is already completed')
-  }
-
   const labellerId = context.auth.uid
-  if (image.get('labellers')?.includes(labellerId)) {
-    throw new functions.https.HttpsError('failed-precondition', 'Image is already labelled')
-  }
+
+  validateImageCanBeSkipped(image, labellerId)
 
   const labellers = [...(image.get('labellers') ?? []), labellerId]
 
@@ -35,3 +26,17 @@ export const skipImage = functions.region('europe-west1').https.onCall(async (da
       functions.logger.error('Error updating image: ', error)
     })
 })
+
+function validateImageCanBeSkipped(image: DocumentSnapshot, labellerId: string): void {
+  if (!image.exists) {
+    throw new functions.https.HttpsError('not-found', 'Image does not exist.')
+  }
+
+  if (image.get('isCompleted')) {
+    throw new functions.https.HttpsError('failed-precondition', 'Image is already completed')
+  }
+
+  if (image.get('labellers')?.includes(labellerId)) {
+    throw new functions.https.HttpsError('failed-precondition', 'Image is already labelled')
+  }
+}
