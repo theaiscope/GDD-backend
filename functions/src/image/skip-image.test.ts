@@ -1,8 +1,7 @@
 import * as admin from 'firebase-admin'
 import * as test from 'firebase-functions-test'
-// import * as firebaseFunctions from 'firebase-functions'
-import { Collections } from '../model/collections'
 import * as functions from '../index'
+import { Collections } from '../model/collections'
 import { Image } from '../model/image'
 
 describe('Skip image action', () => {
@@ -24,17 +23,18 @@ describe('Skip image action', () => {
       isCompleted: false,
       createdOn: new Date('June 13, 2022, 12:00:00'),
     }
-    const requestData = { imageId: imageId }
-    const contextOptions = { auth: { uid: 'labellerId01' } }
-    const expectedLabellers = ['labellerId01']
 
     await db.collection(Collections.IMAGES).doc(imageId).create(sampleImage)
 
-    // when skip action is invoked
+    // When the skip action is invoked
+    const requestData = { imageId: imageId }
+    const contextOptions = { auth: { uid: 'labellerId01' } }
+
     const wrappedSubmitImage = test().wrap(functions.skipImage)
     await wrappedSubmitImage(requestData, contextOptions)
 
-    // then labeller is added to labellers array
+    // Then the labeller is added to labellers array
+    const expectedLabellers = ['labellerId01']
     const updatedImage = await db.collection(Collections.IMAGES).doc(imageId).get()
 
     expect(updatedImage.get('labellers').length).toBeGreaterThan(0)
