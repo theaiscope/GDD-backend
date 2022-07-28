@@ -1,7 +1,7 @@
 import * as admin from 'firebase-admin'
 import * as FacilityCreated from './facility/facility-created'
 import * as UserCreated from './user/user-created'
-import { skipImage as skipImageFunction } from './image/image-skip'
+import { skipImage as skipImageFunction } from './image/skip-image'
 
 admin.initializeApp()
 
