@@ -1,6 +1,6 @@
 import * as admin from 'firebase-admin'
 import * as functions from 'firebase-functions'
-import { Collections } from '../data/collections'
+import { Collections } from '../model/collections'
 import { db } from '../index'
 import UserRecord = admin.auth.UserRecord
 

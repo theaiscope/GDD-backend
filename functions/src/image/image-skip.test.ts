@@ -1,8 +1,9 @@
 import * as admin from 'firebase-admin'
 import * as test from 'firebase-functions-test'
 // import * as firebaseFunctions from 'firebase-functions'
-import { Collections } from '../data/collections'
+import { Collections } from '../model/collections'
 import * as functions from '../index'
+import { Image } from '../model/image'
 
 describe('Skip image action', () => {
   const db = admin.firestore()
@@ -14,16 +15,14 @@ describe('Skip image action', () => {
   it('should mark the image as skipped by the labeller, when the skip action is invoked', async () => {
     // Given an image
     const imageId = 'image111'
-    const sampleImage = {
-      markedAsInvalid: 0,
-      masks: [],
+    const sampleImage: Image = {
       name: 'image_0.jpg',
-      skipped: 0,
-      labellers: null,
-      createdOn: new Date('June 13, 2022, 12:00:00'),
-      isCompleted: false,
       sampleLocation: '1',
       sampleReference: '1',
+      masks: [],
+      markedAsInvalid: 0,
+      isCompleted: false,
+      createdOn: new Date('June 13, 2022, 12:00:00'),
     }
     const requestData = { imageId: imageId }
     const contextOptions = { auth: { uid: 'labellerId01' } }
@@ -45,16 +44,15 @@ describe('Skip image action', () => {
   it('should return an error when trying to skip an already completed image', async () => {
     // Given a completed image
     const imageId = 'image111'
-    const sampleImage = {
-      markedAsInvalid: 0,
-      masks: [],
+    const sampleImage: Image = {
       name: 'image_0.jpg',
-      skipped: 0,
-      labellers: [],
-      createdOn: new Date('June 13, 2022, 12:00:00'),
-      isCompleted: true,
       sampleLocation: '1',
       sampleReference: '1',
+      masks: [],
+      labellers: [],
+      markedAsInvalid: 0,
+      isCompleted: true,
+      createdOn: new Date('June 13, 2022, 12:00:00'),
     }
     await db.collection(Collections.IMAGES).doc(imageId).create(sampleImage)
 
@@ -79,16 +77,15 @@ describe('Skip image action', () => {
     // Given an image labelled by the user
     const imageId = 'image111'
     const userId = 'labellerId01'
-    const sampleImage = {
-      markedAsInvalid: 0,
-      masks: [],
+    const sampleImage: Image = {
       name: 'image_0.jpg',
-      skipped: 0,
-      labellers: [userId],
-      createdOn: new Date('June 13, 2022, 12:00:00'),
-      isCompleted: false,
       sampleLocation: '1',
       sampleReference: '1',
+      masks: [],
+      labellers: [userId],
+      markedAsInvalid: 0,
+      isCompleted: false,
+      createdOn: new Date('June 13, 2022, 12:00:00'),
     }
     await db.collection(Collections.IMAGES).doc(imageId).create(sampleImage)
 

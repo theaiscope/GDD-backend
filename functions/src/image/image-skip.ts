@@ -1,19 +1,20 @@
 import * as functions from 'firebase-functions'
-import { DocumentSnapshot } from 'firebase-functions/v1/firestore'
-import { Collections } from '../data/collections'
 import { db } from '../index'
+import { Collections } from '../model/collections'
+import { Image } from '../model/image'
 
 export const skipImage = functions.region('europe-west1').https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated.')
   }
 
-  const image = await db.collection(Collections.IMAGES).doc(data.imageId).get()
+  const imageSnapshot = await db.collection(Collections.IMAGES).doc(data.imageId).get()
+  const image = imageSnapshot.data() as Image
   const labellerId = context.auth.uid
 
   validateImageCanBeSkipped(image, labellerId)
 
-  const labellers = [...(image.get('labellers') ?? []), labellerId]
+  const labellers = [...(image.labellers ?? []), labellerId]
 
   return db
     .collection(Collections.IMAGES)
@@ -27,16 +28,16 @@ export const skipImage = functions.region('europe-west1').https.onCall(async (da
     })
 })
 
-function validateImageCanBeSkipped(image: DocumentSnapshot, labellerId: string): void {
-  if (!image.exists) {
+function validateImageCanBeSkipped(image: Image | undefined, labellerId: string): void {
+  if (!image) {
     throw new functions.https.HttpsError('not-found', 'Image does not exist.')
   }
 
-  if (image.get('isCompleted')) {
+  if (image.isCompleted) {
     throw new functions.https.HttpsError('failed-precondition', 'Image is already completed')
   }
 
-  if (image.get('labellers')?.includes(labellerId)) {
+  if (image.labellers?.includes(labellerId)) {
     throw new functions.https.HttpsError('failed-precondition', 'Image is already labelled')
   }
 }
