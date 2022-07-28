@@ -68,7 +68,7 @@ describe('Skip image action', () => {
       message: 'Image is already completed',
     }
 
-    expect(async () => {
+    await expect(async () => {
       await wrappedSubmitImage(requestData, contextOptions)
     }).rejects.toMatchObject(expectedError)
   })
@@ -101,7 +101,7 @@ describe('Skip image action', () => {
       message: 'Image is already labelled',
     }
 
-    expect(async () => {
+    await expect(async () => {
       await wrappedSubmitImage(requestData, contextOptions)
     }).rejects.toMatchObject(expectedError)
   })
@@ -119,9 +119,10 @@ describe('Skip image action', () => {
     // Then an error is returned
     const expectedError = {
       code: 'not-found',
+      message: 'Image not found',
     }
 
-    expect(async () => {
+    await expect(async () => {
       await wrappedSubmitImage(requestData, contextOptions)
     }).rejects.toMatchObject(expectedError)
   })

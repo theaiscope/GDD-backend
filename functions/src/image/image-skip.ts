@@ -7,30 +7,32 @@ export const skipImage = functions.region('europe-west1').https.onCall(async (da
   if (!context.auth) {
     throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated.')
   }
-
-  const imageSnapshot = await db.collection(Collections.IMAGES).doc(data.imageId).get()
-  const image = imageSnapshot.data() as Image
   const labellerId = context.auth.uid
 
-  validateImageCanBeSkipped(image, labellerId)
+  try {
+    await db.runTransaction(async (transaction) => {
+      const imageRef = db.collection(Collections.IMAGES).doc(data.imageId)
+      const imageDoc = await transaction.get(imageRef)
 
-  const labellers = [...(image.labellers ?? []), labellerId]
+      const image = imageDoc.data() as Image
 
-  return db
-    .collection(Collections.IMAGES)
-    .doc(data.imageId)
-    .set({ labellers }, { merge: true })
-    .then(() => {
-      functions.logger.log('Image successfully updated!')
+      validateImageCanBeSkipped(image, labellerId)
+
+      const newLabellers = [...(image.labellers ?? []), labellerId]
+      transaction.update(imageRef, { labellers: newLabellers })
     })
-    .catch((error) => {
-      functions.logger.error('Error updating image: ', error)
-    })
+
+    return { message: 'Image skipped', imageId: data.imageId, labellerId }
+  } catch (error) {
+    if (error instanceof functions.https.HttpsError) throw error
+
+    throw new functions.https.HttpsError('internal', 'Unexpected error occurred while skipping image')
+  }
 })
 
 function validateImageCanBeSkipped(image: Image | undefined, labellerId: string): void {
   if (!image) {
-    throw new functions.https.HttpsError('not-found', 'Image does not exist.')
+    throw new functions.https.HttpsError('not-found', 'Image not found')
   }
 
   if (image.isCompleted) {
