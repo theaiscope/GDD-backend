@@ -6,6 +6,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./functions
     steps:
       - uses: actions/checkout@v2
       - name: Setup Node.js environment
@@ -14,14 +17,8 @@ jobs:
           node-version: 16
           cache: 'yarn'
       - name: Install dependencies
-        run: |
-          cd functions
-          yarn install
+        run: yarn install
       - name: Run lint
-        run: |
-          cd functions
-          yarn lint
+        run: yarn lint
       - name: Run tests
-        run: |
-          cd functions
-          yarn test
+        run: yarn test
