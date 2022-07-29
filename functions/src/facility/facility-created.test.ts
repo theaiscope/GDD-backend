@@ -1,24 +1,28 @@
 import * as admin from 'firebase-admin'
 import * as test from 'firebase-functions-test'
-import { Collections } from '../model/collections'
 import * as functions from '../index'
+import { Collections } from '../model/collections'
 
 describe('FacilityCreated', () => {
   const db = admin.firestore()
+  const onFacilityCreatedFunction = test().wrap(functions.onNewFacilityCreated)
+
+  beforeEach(async () => {
+    await test().firestore.clearFirestoreData('aiscope-labelling-app-test')
+  })
 
   it('should initialize microscopists when creating a new facility without microscopists', async () => {
-    // Create a new facility without microscopists
-    const facilityId = 'id111'
+    // Given a new facility is created without microscopists
+    const facilityId = 'facility111'
     const emptyFacility = {}
     await db.collection(Collections.FACILITIES).doc(facilityId).create(emptyFacility)
 
-    // Call the function
+    // When the onFacilityCreated function is executed
     const facilitySnapshot = test().firestore.makeDocumentSnapshot(emptyFacility, `facilities/${facilityId}`)
 
-    const wrappedOnFacilityCreated = test().wrap(functions.onNewFacilityCreated)
-    await wrappedOnFacilityCreated(facilitySnapshot)
+    await onFacilityCreatedFunction(facilitySnapshot)
 
-    // Check that the microscopists were initialized
+    // Then the microscopists must have been initialized
     const createdFacility = await db.collection(Collections.FACILITIES).doc(facilityId).get()
 
     expect(createdFacility.exists).toBeTruthy()
@@ -27,18 +31,17 @@ describe('FacilityCreated', () => {
   })
 
   it('should initialize the name when creating a new facility without name', async () => {
-    // Create a new facility without a name
-    const facilityId = 'id222'
+    // Given a new facility is created without a name
+    const facilityId = 'facility111'
     const emptyFacility = {}
     await db.collection(Collections.FACILITIES).doc(facilityId).create(emptyFacility)
 
-    // Call the function
+    // When the onFacilityCreated function is executed
     const facilitySnapshot = test().firestore.makeDocumentSnapshot(emptyFacility, `facilities/${facilityId}`)
 
-    const wrappedOnFacilityCreated = test().wrap(functions.onNewFacilityCreated)
-    await wrappedOnFacilityCreated(facilitySnapshot)
+    await onFacilityCreatedFunction(facilitySnapshot)
 
-    // Check that the name was initialized
+    // Then the name should have been initialized
     const createdFacility = await db.collection(Collections.FACILITIES).doc(facilityId).get()
 
     expect(createdFacility.exists).toBeTruthy()
@@ -46,20 +49,19 @@ describe('FacilityCreated', () => {
   })
 
   it('should not change microscopists when creating a new facility with microscopists filled', async () => {
-    // Create a new facility
-    const facilityId = 'id333'
+    // Given a new facility is created with microscopists defined
+    const facilityId = 'facility111'
     const facilityToCreate = {
       microscopists: ['microscopists/abc123'],
     }
     await db.collection(Collections.FACILITIES).doc(facilityId).create(facilityToCreate)
 
-    // Call the function
+    // When the onFacilityCreated function is executed
     const facilitySnapshot = test().firestore.makeDocumentSnapshot(facilityToCreate, `facilities/${facilityId}`)
 
-    const wrappedOnFacilityCreated = test().wrap(functions.onNewFacilityCreated)
-    await wrappedOnFacilityCreated(facilitySnapshot)
+    await onFacilityCreatedFunction(facilitySnapshot)
 
-    // Check that the atributes were not changed
+    // Then the microscopists should not have been changed
     const createdFacility = await db.collection(Collections.FACILITIES).doc(facilityId).get()
 
     expect(createdFacility.exists).toBeTruthy()
@@ -67,20 +69,19 @@ describe('FacilityCreated', () => {
   })
 
   it('should not change name when creating a new facility with name filled', async () => {
-    // Create a new facility
-    const facilityId = 'id444'
+    // Given a new facility is created with a name
+    const facilityId = 'facility111'
     const facilityToCreate = {
       name: 'Test Facility',
     }
     await db.collection(Collections.FACILITIES).doc(facilityId).create(facilityToCreate)
 
-    // Call the function
+    // When the onFacilityCreated function is executed
     const snapshot = test().firestore.makeDocumentSnapshot(facilityToCreate, `facilities/${facilityId}`)
 
-    const wrappedOnFacilityCreated = test().wrap(functions.onNewFacilityCreated)
-    await wrappedOnFacilityCreated(snapshot)
+    await onFacilityCreatedFunction(snapshot)
 
-    // Check that the atributes were not changed
+    // Then the name should not have been changed
     const createdFacility = await db.collection(Collections.FACILITIES).doc(facilityId).get()
 
     expect(createdFacility.exists).toBeTruthy()
