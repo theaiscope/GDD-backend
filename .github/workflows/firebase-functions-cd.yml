@@ -6,7 +6,10 @@ on:
       - main
 
 jobs:
+  test:
+    uses: ./.github/workflows/test-workflow.yaml
   build:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -15,7 +18,8 @@ jobs:
         with:
           node-version: '16'
           check-latest: true
-      - name: Install npm packages
+          cache: 'yarn'
+      - name: Install dependencies
         run: |
           cd functions
           yarn install
