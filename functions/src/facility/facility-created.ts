@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions'
-import { Collections } from '../data/collections'
+import { Collections } from '../model/collections'
 import { db } from '../index'
 
 const DEFAULT_FACILITY_NAME = '___NAME HERE___'

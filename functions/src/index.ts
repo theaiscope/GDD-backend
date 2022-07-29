@@ -1,11 +1,14 @@
 import * as admin from 'firebase-admin'
-import * as FacilityCreated from './facility/facility-created'
-import * as UserCreated from './user/user-created'
+import { onNewFacilityCreated as onNewFacilityCreatedFunction } from './facility/facility-created'
+import { onNewUserCreated as onNewUserCreatedFunction } from './user/user-created'
+import { skipImage as skipImageFunction } from './image/skip-image'
 
 admin.initializeApp()
 
 export const db = admin.firestore()
 
-export const onNewUserCreated = UserCreated.onNewUserCreated
+export const onNewUserCreated = onNewUserCreatedFunction
 
-export const onNewFacilityCreated = FacilityCreated.onNewFacilityCreated
+export const onNewFacilityCreated = onNewFacilityCreatedFunction
+
+export const skipImage = skipImageFunction
