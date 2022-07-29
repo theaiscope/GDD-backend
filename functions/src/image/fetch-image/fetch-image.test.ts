@@ -11,7 +11,7 @@ describe('FetchImage', () => {
   const fetchImageFunction = test().wrap(functions.fetchImageToLabel)
 
   beforeEach(async () => {
-    await test().firestore.clearFirestoreData('aiscope-labelling-app-test')
+    await test().firestore.clearFirestoreData({ projectId: 'aiscope-labelling-app-test' })
   })
 
   it('should not return an image when there is no image', async () => {

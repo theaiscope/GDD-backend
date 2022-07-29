@@ -6,6 +6,7 @@ import { Image } from '../../model/image'
 
 describe('Skip image action', () => {
   const db = admin.firestore()
+  const skipImageFunction = test().wrap(functions.skipImage)
 
   beforeEach(async () => {
     await test().firestore.clearFirestoreData({ projectId: 'aiscope-labelling-app-test' })
@@ -30,8 +31,7 @@ describe('Skip image action', () => {
     const requestData = { imageId: imageId }
     const contextOptions = { auth: { uid: 'labellerId01' } }
 
-    const wrappedSubmitImage = test().wrap(functions.skipImage)
-    await wrappedSubmitImage(requestData, contextOptions)
+    await skipImageFunction(requestData, contextOptions)
 
     // Then the labeller is added to labellers array
     const expectedLabellers = ['labellerId01']
@@ -60,8 +60,6 @@ describe('Skip image action', () => {
     const requestData = { imageId: imageId }
     const contextOptions = { auth: { uid: 'labellerId01' } }
 
-    const wrappedSubmitImage = test().wrap(functions.skipImage)
-
     // Then an error is returned
     const expectedError = {
       code: 'failed-precondition',
@@ -69,7 +67,7 @@ describe('Skip image action', () => {
     }
 
     await expect(async () => {
-      await wrappedSubmitImage(requestData, contextOptions)
+      await skipImageFunction(requestData, contextOptions)
     }).rejects.toMatchObject(expectedError)
   })
 
@@ -93,8 +91,6 @@ describe('Skip image action', () => {
     const requestData = { imageId: imageId }
     const contextOptions = { auth: { uid: userId } }
 
-    const wrappedSubmitImage = test().wrap(functions.skipImage)
-
     // Then an error is returned
     const expectedError = {
       code: 'failed-precondition',
@@ -102,7 +98,7 @@ describe('Skip image action', () => {
     }
 
     await expect(async () => {
-      await wrappedSubmitImage(requestData, contextOptions)
+      await skipImageFunction(requestData, contextOptions)
     }).rejects.toMatchObject(expectedError)
   })
 
@@ -114,8 +110,6 @@ describe('Skip image action', () => {
     const requestData = { imageId: imageId }
     const contextOptions = { auth: { uid: 'labellerId01' } }
 
-    const wrappedSubmitImage = test().wrap(functions.skipImage)
-
     // Then an error is returned
     const expectedError = {
       code: 'not-found',
@@ -123,7 +117,7 @@ describe('Skip image action', () => {
     }
 
     await expect(async () => {
-      await wrappedSubmitImage(requestData, contextOptions)
+      await skipImageFunction(requestData, contextOptions)
     }).rejects.toMatchObject(expectedError)
   })
 })

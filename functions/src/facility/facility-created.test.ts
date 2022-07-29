@@ -8,7 +8,7 @@ describe('FacilityCreated', () => {
   const onFacilityCreatedFunction = test().wrap(functions.onNewFacilityCreated)
 
   beforeEach(async () => {
-    await test().firestore.clearFirestoreData('aiscope-labelling-app-test')
+    await test().firestore.clearFirestoreData({ projectId: 'aiscope-labelling-app-test' })
   })
 
   it('should initialize microscopists when creating a new facility without microscopists', async () => {

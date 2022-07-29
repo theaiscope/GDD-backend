@@ -6,6 +6,7 @@ import UserRecord = admin.auth.UserRecord
 
 describe('UserCreated', () => {
   const db = admin.firestore()
+  const onUserCreatedFunction = test().wrap(functions.onNewUserCreated)
 
   it('should create a new disabled microscopist when a new user is created', async () => {
     const user: UserRecord = {
@@ -21,8 +22,7 @@ describe('UserCreated', () => {
       toJSON: () => ({}),
     }
 
-    const wrappedOnUserCreated = test().wrap(functions.onNewUserCreated)
-    await wrappedOnUserCreated(user)
+    await onUserCreatedFunction(user)
 
     const createdMicroscopist = await db.collection(Collections.MICROSCOPISTS).doc(user.uid).get()
 
