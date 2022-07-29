@@ -22,7 +22,7 @@ describe('FacilityCreated', () => {
 
     await onFacilityCreatedFunction(facilitySnapshot)
 
-    // Then the microscopists must have been initialized
+    // Then the microscopists should have been initialized
     const createdFacility = await db.collection(Collections.FACILITIES).doc(facilityId).get()
 
     expect(createdFacility.exists).toBeTruthy()
