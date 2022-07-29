@@ -17,13 +17,11 @@ jobs:
           node-version: 16
           check-latest: true
       - name: Install dependencies
-        run: 
+        run:
           yarn install
       - name: Run lint
-        run: |
-          cd functions
+        run:
           yarn lint
       - name: Run tests
-        run: |
-          cd functions
+        run:
           yarn test
