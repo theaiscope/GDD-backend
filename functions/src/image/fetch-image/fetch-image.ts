@@ -1,8 +1,8 @@
 import * as functions from 'firebase-functions'
-import { db } from '..'
-import { Collections } from '../model/collections'
-import { Image } from '../model/image'
-import { mapDocumentToImage } from '../model/mapper/image-mapper'
+import { db } from '../../index'
+import { Collections } from '../../model/collections'
+import { Image } from '../../model/image'
+import { mapDocumentToImage } from '../../model/mapper/image-mapper'
 import { CREATED_ON, IS_COMPLETED } from './query-constants'
 
 export const fetchImageToLabel = functions.https.onCall(async (_data, context) => {

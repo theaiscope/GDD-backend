@@ -1,8 +1,8 @@
 import * as admin from 'firebase-admin'
 import * as test from 'firebase-functions-test'
-import * as functions from '../index'
-import { Collections } from '../model/collections'
-import { Image } from '../model/image'
+import * as functions from '../../index'
+import { Collections } from '../../model/collections'
+import { Image } from '../../model/image'
 
 describe('Skip image action', () => {
   const db = admin.firestore()

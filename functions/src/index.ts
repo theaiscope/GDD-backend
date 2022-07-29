@@ -1,7 +1,7 @@
 import * as admin from 'firebase-admin'
 import { onNewFacilityCreated as onNewFacilityCreatedFunction } from './facility/facility-created'
-import { fetchImageToLabel as fetchImageToLabelFunction } from './image/fetch-image'
-import { skipImage as skipImageFunction } from './image/skip-image'
+import { fetchImageToLabel as fetchImageToLabelFunction } from './image/fetch-image/fetch-image'
+import { skipImage as skipImageFunction } from './image/skip-image/skip-image'
 import { onNewUserCreated as onNewUserCreatedFunction } from './user/user-created'
 
 admin.initializeApp()

@@ -1,7 +1,7 @@
 import * as admin from 'firebase-admin'
 import * as test from 'firebase-functions-test'
-import { Collections } from '../model/collections'
-import * as functions from '../index'
+import { Collections } from '../../model/collections'
+import * as functions from '../../index'
 
 describe('FetchImage', () => {
   const db = admin.firestore()
