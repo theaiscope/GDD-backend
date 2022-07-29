@@ -15,10 +15,15 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 16
-          cache: 'yarn'
+          check-latest: true
       - name: Install dependencies
-        run: yarn install
+        run: 
+          yarn install
       - name: Run lint
-        run: yarn lint
+        run: |
+          cd functions
+          yarn lint
       - name: Run tests
-        run: yarn test
+        run: |
+          cd functions
+          yarn test
