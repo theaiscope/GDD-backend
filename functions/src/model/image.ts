@@ -1,4 +1,5 @@
 export interface Image {
+  id?: string
   name?: string
   sampleLocation?: string
   sampleReference?: string

@@ -13,7 +13,7 @@ export const fetchImageToLabel = functions.https.onCall(async (_data, context) =
   const userId = context.auth.uid
   const notCompletedImages = await getNotCompletedImages()
 
-  return notCompletedImages.find((image) => !image.labellers.includes(userId))
+  return notCompletedImages.find((image) => !image.labellers?.includes(userId))
 })
 
 async function getNotCompletedImages(): Promise<Image[]> {
