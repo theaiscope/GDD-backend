@@ -1,0 +1,28 @@
+name: Test Workflow
+
+on:
+  workflow_call:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./functions
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: './functions/.nvmrc'
+          cache: yarn
+          cache-dependency-path: ./functions/yarn.lock
+      - name: Install dependencies
+        run:
+          yarn install
+      - name: Run lint
+        run:
+          yarn lint
+      - name: Run tests
+        run:
+          yarn test

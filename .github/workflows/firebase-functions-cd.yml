@@ -6,16 +6,20 @@ on:
       - main
 
 jobs:
+  test:
+    uses: ./.github/workflows/test-workflow.yml
   build:
+    needs: test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Setup Node.js environment
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: '16'
-          check-latest: true
-      - name: Install npm packages
+          node-version-file: './functions/.nvmrc'
+          cache: yarn
+          cache-dependency-path: ./functions/yarn.lock
+      - name: Install dependencies
         run: |
           cd functions
           yarn install
