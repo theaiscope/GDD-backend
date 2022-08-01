@@ -1,28 +1,29 @@
 # GDD-backend
-repository to host backend functionality for the GDD apps
+Repository to host backend functionality for the GDD apps.
 
-This repository contains functionality that is only deployed for the backend. 
-Currently this includes:
-- [firebase function to create microscopists](#creating-microscopists)
-- [firebase function to add base info when creating facilities](#creating-facilities)
+The backend is based on a serverless architecture using Firebase Cloud Functions.
 
-### creating microscopists
+## Testing, formatting and linting
 
-When a new user is created in firebase a new entry is added to the microscopist collection with the following fields
-```
-    enabled: false
+Switch to the `functions` directory (javascript project source) before running the commands.
+```shell
+cd functions
 ```
 
-
-### creating facilities
-
-When a new facility is created a firebase function runs to auto generate some data
+To run the tests:
+```shell
+yarn test
 ```
-    microscopists: [
-      {
-        name: ___NAME HERE___
-      }
-    ]
+> The test script will setup and start the [Firebase Emulator](https://github.com/firebase/firebase-tools#deployment-and-local-emulation) and use [Jest](https://jestjs.io/) as the test runner.
+
+To run linting:
+```shell
+yarn lint
+```
+
+To auto format use prettier:
+```shell
+yarn prettier --write .
 ```
 
 ## Deployment
