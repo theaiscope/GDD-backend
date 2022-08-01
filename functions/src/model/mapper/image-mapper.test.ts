@@ -1,4 +1,4 @@
-import { makeDocumentSnapshot } from 'firebase-functions-test/lib/providers/firestore'
+import * as test from 'firebase-functions-test'
 import { Image } from '../image'
 import { mapDocumentToImage } from './image-mapper'
 
@@ -14,7 +14,7 @@ describe('ImageMapper', () => {
       markedAsInvalid: 0,
       isCompleted: false,
     }
-    const documentSnapshot = makeDocumentSnapshot(document, `/images/${id}`)
+    const documentSnapshot = test().firestore.makeDocumentSnapshot(document, `/images/${id}`)
 
     const result = mapDocumentToImage(documentSnapshot)
 
