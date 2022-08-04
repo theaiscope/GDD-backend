@@ -1,5 +1,5 @@
 # GDD-backend
-Repository to host backend functionality for the GDD apps.
+Repository to host backend functionality for the GDD-webapp.
 
 The backend is based on a serverless architecture using Firebase Cloud Functions.
 
