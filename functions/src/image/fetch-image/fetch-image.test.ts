@@ -2,6 +2,7 @@ import * as admin from 'firebase-admin'
 import * as test from 'firebase-functions-test'
 import { Collections } from '../../model/collections'
 import * as functions from '../../index'
+import { Image } from '../../model/image'
 
 describe('FetchImage', () => {
   const db = admin.firestore()
@@ -27,6 +28,18 @@ describe('FetchImage', () => {
     const result = await fetchImageFunction(null, contextOptions)
 
     expect(result).toBeUndefined()
+  })
+
+  it('should return the oldest created image as the next image to label', async () => {
+    const idOldestImage = 'cqPCZrwCh'
+    await createTestImage(idOldestImage, { createdOn: new Date('2022-08-01') })
+    await createTestImage('bgoRDxigm', { createdOn: new Date('2022-08-05') })
+    await createTestImage('mkXGjyvke', { createdOn: new Date('2022-08-10') })
+
+    const result = await fetchImageFunction(null, contextOptions)
+
+    expect(result).toBeDefined()
+    expect(result.id).toEqual(idOldestImage)
   })
 
   it('should return the next not completed image', async () => {
@@ -59,7 +72,7 @@ describe('FetchImage', () => {
     expect(result).toBeUndefined()
   })
 
-  const createTestImage = (id: string, initialData?: Record<string, unknown>) =>
+  const createTestImage = (id: string, initialData?: Image) =>
     db
       .collection(Collections.IMAGES)
       .doc(id)
