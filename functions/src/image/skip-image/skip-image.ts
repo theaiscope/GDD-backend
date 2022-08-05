@@ -1,7 +1,7 @@
 import * as functions from 'firebase-functions'
-import { db } from '../index'
-import { Collections } from '../model/collections'
-import { Image } from '../model/image'
+import { db } from '../../index'
+import { Collections } from '../../model/collections'
+import { Image } from '../../model/image'
 
 export const skipImage = functions.region('europe-west1').https.onCall(async (data, context) => {
   if (!context.auth) {
