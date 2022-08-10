@@ -14,51 +14,40 @@ describe('Skip image action', () => {
 
   it('should mark the image as skipped by the labeller, when the skip action is invoked', async () => {
     // Given an image
-    const imageId = 'image111'
+    const imageId = 'image-1'
     const sampleImage: Image = {
-      name: 'image_0.jpg',
-      sampleLocation: '1',
-      sampleReference: '1',
-      masks: [],
-      markedAsInvalid: 0,
+      name: 'image-1.jpg',
       isCompleted: false,
-      createdOn: new Date('June 13, 2022, 12:00:00'),
     }
+    const labellerId = 'labeller-1'
 
     await db.collection(Collections.IMAGES).doc(imageId).create(sampleImage)
 
     // When the skip action is invoked
     const requestData = { imageId: imageId }
-    const contextOptions = { auth: { uid: 'labellerId01' } }
+    const contextOptions = { auth: { uid: labellerId } }
 
     await skipImageFunction(requestData, contextOptions)
 
     // Then the labeller is added to labellers array
-    const expectedLabellers = ['labellerId01']
+    const expectedLabellers = [labellerId]
     const updatedImage = await db.collection(Collections.IMAGES).doc(imageId).get()
 
-    expect(updatedImage.get('labellers').length).toBeGreaterThan(0)
     expect(updatedImage.get('labellers')).toEqual(expectedLabellers)
   })
 
   it('should return an error when trying to skip an already completed image', async () => {
     // Given a completed image
-    const imageId = 'image111'
+    const imageId = 'image-1'
     const sampleImage: Image = {
-      name: 'image_0.jpg',
-      sampleLocation: '1',
-      sampleReference: '1',
-      masks: [],
-      labellers: [],
-      markedAsInvalid: 0,
+      name: 'image_1.jpg',
       isCompleted: true,
-      createdOn: new Date('June 13, 2022, 12:00:00'),
     }
     await db.collection(Collections.IMAGES).doc(imageId).create(sampleImage)
 
     // When skip action is invoked
     const requestData = { imageId: imageId }
-    const contextOptions = { auth: { uid: 'labellerId01' } }
+    const contextOptions = { auth: { uid: 'labeller-1' } }
 
     // Then an error is returned
     const expectedError = {
@@ -71,19 +60,14 @@ describe('Skip image action', () => {
     }).rejects.toMatchObject(expectedError)
   })
 
-  it('should return an error when trying to skip an already labelled image by the user', async () => {
+  it('should return an error when trying to skip an image already labelled by the user', async () => {
     // Given an image labelled by the user
-    const imageId = 'image111'
-    const userId = 'labellerId01'
+    const imageId = 'image-1'
+    const userId = 'labeller-1'
     const sampleImage: Image = {
-      name: 'image_0.jpg',
-      sampleLocation: '1',
-      sampleReference: '1',
-      masks: [],
+      name: 'image_1.jpg',
       labellers: [userId],
-      markedAsInvalid: 0,
       isCompleted: false,
-      createdOn: new Date('June 13, 2022, 12:00:00'),
     }
     await db.collection(Collections.IMAGES).doc(imageId).create(sampleImage)
 
@@ -104,11 +88,11 @@ describe('Skip image action', () => {
 
   it('should return an error when trying to skip an image that does not exist', async () => {
     // Given an non-existing image
-    const imageId = 'image111'
+    const imageId = 'image-1'
 
     // When skip action is invoked
     const requestData = { imageId: imageId }
-    const contextOptions = { auth: { uid: 'labellerId01' } }
+    const contextOptions = { auth: { uid: 'labeller-1' } }
 
     // Then an error is returned
     const expectedError = {
