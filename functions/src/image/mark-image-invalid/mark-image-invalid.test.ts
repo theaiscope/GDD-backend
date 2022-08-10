@@ -37,6 +37,30 @@ describe('MarkImageAsInvalid', () => {
     expect(updatedImage.get('markedAsInvalid')).toEqual(1)
   })
 
+  it('should mark the image as Completed when it is marked as invalid 3 times', async () => {
+    // Given an image markedAsInvalid 2 times
+    const imageId = 'image-1'
+    const sampleImage: Image = {
+      name: 'image_1.jpg',
+      markedAsInvalid: 2,
+      isCompleted: false,
+    }
+    const labellerId = 'labeller-1'
+
+    await db.collection(Collections.IMAGES).doc(imageId).create(sampleImage)
+
+    // When markImageInvalid function is invoked
+    const requestData = { imageId: imageId }
+    const contextOptions = { auth: { uid: labellerId } }
+
+    await markImageInvalidFunction(requestData, contextOptions)
+
+    // Then isCompleted should be set to true
+    const updatedImage = await db.collection(Collections.IMAGES).doc(imageId).get()
+
+    expect(updatedImage.get('isCompleted')).toEqual(true)
+  })
+
   it('should return an error when trying to mark as invalid an already completed image', async () => {
     // Given a completed image
     const imageId = 'image-1'

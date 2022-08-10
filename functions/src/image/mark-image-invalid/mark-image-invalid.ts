@@ -3,6 +3,8 @@ import { db } from '../../index'
 import { Collections } from '../../model/collections'
 import { Image } from '../../model/image'
 
+const MARK_IMAGE_AS_INVALID_TIMES_TO_COMPLETE = 3
+
 export const markImageInvalid = functions.region('europe-west1').https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated.')
@@ -18,12 +20,14 @@ export const markImageInvalid = functions.region('europe-west1').https.onCall(as
 
       validateCanMarkImageInvalid(image, labellerId)
 
-      const newLabellers = [...(image.labellers ?? []), labellerId]
-      const newMarkedAsInvalid = (image.markedAsInvalid ?? 0) + 1
+      const labellers = [...(image.labellers ?? []), labellerId]
+      const markedAsInvalid = (image.markedAsInvalid ?? 0) + 1
+      const isCompleted = markedAsInvalid === MARK_IMAGE_AS_INVALID_TIMES_TO_COMPLETE
 
       transaction.update(imageRef, {
-        labellers: newLabellers,
-        markedAsInvalid: newMarkedAsInvalid,
+        labellers,
+        markedAsInvalid,
+        isCompleted,
       })
     })
 
