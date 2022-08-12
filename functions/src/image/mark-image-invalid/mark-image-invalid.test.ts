@@ -55,7 +55,7 @@ describe('MarkImageAsInvalid', () => {
 
     await markImageInvalidFunction(requestData, contextOptions)
 
-    // Then isCompleted should be set to true
+    // Then the status should be CONFIRMED_INVALID and isCompleted should be true
     const updatedImage = await db.collection(Collections.IMAGES).doc(imageId).get()
 
     expect(updatedImage.get('status')).toEqual(ImageStatus.CONFIRMED_INVALID)

@@ -15,7 +15,6 @@ export const markImageInvalid = functions.region('europe-west1').https.onCall(as
     await db.runTransaction(async (transaction) => {
       const imageRef = db.collection(Collections.IMAGES).doc(data.imageId)
       const imageDoc = await transaction.get(imageRef)
-
       const image = imageDoc.data() as Image
 
       validateCanMarkImageInvalid(image, labellerId)
