@@ -1,9 +1,9 @@
 import * as functions from 'firebase-functions'
 import { db } from '../../index'
 import { Collections } from '../../model/collections'
-import { Image } from '../../model/image'
+import { Image, ImageStatus } from '../../model/image'
 
-const MARK_IMAGE_AS_INVALID_TIMES_TO_COMPLETE = 3
+const MARK_AS_INVALID_LIMIT_TO_COMPLETE = 3
 
 export const markImageInvalid = functions.region('europe-west1').https.onCall(async (data, context) => {
   if (!context.auth) {
@@ -20,13 +20,17 @@ export const markImageInvalid = functions.region('europe-west1').https.onCall(as
 
       validateCanMarkImageInvalid(image, labellerId)
 
-      const labellers = [...(image.labellers ?? []), labellerId]
-      const markedAsInvalid = (image.markedAsInvalid ?? 0) + 1
-      const isCompleted = markedAsInvalid === MARK_IMAGE_AS_INVALID_TIMES_TO_COMPLETE
+      const labellers: string[] = [...(image.labellers ?? []), labellerId]
+      const markedAsInvalid: number = (image.markedAsInvalid ?? 0) + 1
+
+      const reachedMarkAsInvalidLimit: boolean = markedAsInvalid === MARK_AS_INVALID_LIMIT_TO_COMPLETE
+      const isCompleted: boolean = reachedMarkAsInvalidLimit
+      const status: ImageStatus = reachedMarkAsInvalidLimit ? ImageStatus.CONFIRMED_INVALID : ImageStatus.IN_REVIEW
 
       transaction.update(imageRef, {
         labellers,
         markedAsInvalid,
+        status,
         isCompleted,
       })
     })

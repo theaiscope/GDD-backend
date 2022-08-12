@@ -2,7 +2,7 @@ import * as admin from 'firebase-admin'
 import * as test from 'firebase-functions-test'
 import * as functions from '../../index'
 import { Collections } from '../../model/collections'
-import { Image } from '../../model/image'
+import { Image, ImageStatus } from '../../model/image'
 
 describe('MarkImageAsInvalid', () => {
   const db = admin.firestore()
@@ -37,7 +37,7 @@ describe('MarkImageAsInvalid', () => {
     expect(updatedImage.get('markedAsInvalid')).toEqual(1)
   })
 
-  it('should mark the image as Completed when it is marked as invalid 3 times', async () => {
+  it('should mark the image as CONFIRMED_INVALID and flag isCompleted true when it is marked as invalid 3 times', async () => {
     // Given an image markedAsInvalid 2 times
     const imageId = 'image-1'
     const sampleImage: Image = {
@@ -58,6 +58,7 @@ describe('MarkImageAsInvalid', () => {
     // Then isCompleted should be set to true
     const updatedImage = await db.collection(Collections.IMAGES).doc(imageId).get()
 
+    expect(updatedImage.get('status')).toEqual(ImageStatus.CONFIRMED_INVALID)
     expect(updatedImage.get('isCompleted')).toEqual(true)
   })
 
