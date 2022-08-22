@@ -3,7 +3,7 @@ import { onNewFacilityCreated as onNewFacilityCreatedFunction } from './facility
 import { fetchImageToLabel as fetchImageToLabelFunction } from './image/fetch-image/fetch-image'
 import { skipImage as skipImageFunction } from './image/skip-image/skip-image'
 import { markImageInvalid as markImageInvalidFunction } from './image/mark-image-invalid/mark-image-invalid'
-import { saveImage as saveImageFunction } from './image/save-image/save-image'
+import { saveValidImage as saveValidImageFunction } from './image/save-valid-image/save-valid-image'
 import { onNewUserCreated as onNewUserCreatedFunction } from './user/user-created'
 
 admin.initializeApp()
@@ -18,6 +18,6 @@ export const skipImage = skipImageFunction
 
 export const markImageInvalid = markImageInvalidFunction
 
-export const saveImage = saveImageFunction
+export const saveValidImage = saveValidImageFunction
 
 export const fetchImageToLabel = fetchImageToLabelFunction

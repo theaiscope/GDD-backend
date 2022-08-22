@@ -3,17 +3,17 @@ import * as test from 'firebase-functions-test'
 import * as functions from '../../index'
 import { Collections } from '../../model/collections'
 import { Image, ImageStatus } from '../../model/image'
-import { SaveImageRequest } from './model/save-image-request'
+import { SaveValidImageRequest } from './model/save-image-request'
 
-describe('SaveImage', () => {
+describe('SaveValidImage', () => {
   const db = admin.firestore()
-  const saveImageFunction = test().wrap(functions.saveImage)
+  const saveValidImageFunction = test().wrap(functions.saveValidImage)
 
   beforeEach(async () => {
     await test().firestore.clearFirestoreData({ projectId: 'aiscope-labelling-app-test' })
   })
 
-  it('should save the image by the labeller', async () => {
+  it('should set the image as saved by the labeller', async () => {
     // Given an image
     const imageId = 'image-1'
     const sampleImage: Image = {
@@ -24,23 +24,23 @@ describe('SaveImage', () => {
 
     await db.collection(Collections.IMAGES).doc(imageId).create(sampleImage)
 
-    // When saveImage function is invoked
-    const requestData: SaveImageRequest = {
+    // When saveValidImage function is invoked
+    const requestData: SaveValidImageRequest = {
       imageId: imageId,
       maskName: `mask_${imageId}_0.png`,
     }
     const contextOptions = { auth: { uid: labellerId } }
 
-    await saveImageFunction(requestData, contextOptions)
+    await saveValidImageFunction(requestData, contextOptions)
 
-    // Then the labeller is added to the labellers array and a new mask is created
+    // Then the labeller and a new mask are added
     const updatedImage = await db.collection(Collections.IMAGES).doc(imageId).get()
 
     expect(updatedImage.get('labellers')).toEqual([labellerId])
     expect(updatedImage.get('masks')).toEqual([{ name: `mask_${imageId}_0.png`, uploadedBy: labellerId }])
   })
 
-  it('should mark the image as CONFIRMED_VALID and flag isCompleted true when it is saved with 4 masks', async () => {
+  it('should mark the image as CONFIRMED_VALID and Completed when it is saved with 4 masks', async () => {
     // Given an image with 3 masks
     const imageId = 'image-1'
     const sampleImage: Image = {
@@ -55,11 +55,11 @@ describe('SaveImage', () => {
     }
     await db.collection(Collections.IMAGES).doc(imageId).create(sampleImage)
 
-    // When saveImage function is invoked
-    const requestData: SaveImageRequest = { imageId: imageId, maskName: `mask_${imageId}_3.png` }
+    // When saveValidImage function is invoked
+    const requestData: SaveValidImageRequest = { imageId: imageId, maskName: `mask_${imageId}_3.png` }
     const contextOptions = { auth: { uid: 'labeller-1' } }
 
-    await saveImageFunction(requestData, contextOptions)
+    await saveValidImageFunction(requestData, contextOptions)
 
     // Then the status should be CONFIRMED_VALID and isCompleted should be true
     const updatedImage = await db.collection(Collections.IMAGES).doc(imageId).get()
@@ -77,8 +77,8 @@ describe('SaveImage', () => {
     }
     await db.collection(Collections.IMAGES).doc(imageId).create(sampleImage)
 
-    // When saveImage function is invoked
-    const requestData: SaveImageRequest = { imageId: imageId, maskName: `mask_${imageId}_0.png` }
+    // When saveValidImage function is invoked
+    const requestData: SaveValidImageRequest = { imageId: imageId, maskName: `mask_${imageId}_0.png` }
     const contextOptions = { auth: { uid: 'labeller-1' } }
 
     // Then an error is returned
@@ -88,7 +88,7 @@ describe('SaveImage', () => {
     }
 
     await expect(async () => {
-      await saveImageFunction(requestData, contextOptions)
+      await saveValidImageFunction(requestData, contextOptions)
     }).rejects.toMatchObject(expectedError)
   })
 
@@ -109,8 +109,8 @@ describe('SaveImage', () => {
     }
     await db.collection(Collections.IMAGES).doc(imageId).create(sampleImage)
 
-    // When saveImage function is invoked
-    const requestData: SaveImageRequest = { imageId: imageId, maskName: `mask_${imageId}_1.png` }
+    // When saveValidImage function is invoked
+    const requestData: SaveValidImageRequest = { imageId: imageId, maskName: `mask_${imageId}_1.png` }
     const contextOptions = { auth: { uid: userId } }
 
     // Then an error is returned
@@ -120,7 +120,7 @@ describe('SaveImage', () => {
     }
 
     await expect(async () => {
-      await saveImageFunction(requestData, contextOptions)
+      await saveValidImageFunction(requestData, contextOptions)
     }).rejects.toMatchObject(expectedError)
   })
 
@@ -128,8 +128,8 @@ describe('SaveImage', () => {
     // Given an non-existing image
     const imageId = 'image-1'
 
-    // When saveImage function is invoked
-    const requestData: SaveImageRequest = { imageId: imageId, maskName: `mask_${imageId}_0.png` }
+    // When saveValidImage function is invoked
+    const requestData: SaveValidImageRequest = { imageId: imageId, maskName: `mask_${imageId}_0.png` }
     const contextOptions = { auth: { uid: 'labeller-1' } }
 
     // Then an error is returned
@@ -139,7 +139,7 @@ describe('SaveImage', () => {
     }
 
     await expect(async () => {
-      await saveImageFunction(requestData, contextOptions)
+      await saveValidImageFunction(requestData, contextOptions)
     }).rejects.toMatchObject(expectedError)
   })
 })
