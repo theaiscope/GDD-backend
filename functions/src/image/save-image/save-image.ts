@@ -1,8 +1,10 @@
 import * as functions from 'firebase-functions'
 import { db } from '../../index'
 import { Collections } from '../../model/collections'
-import { Image, Mask } from '../../model/image'
+import { Image, ImageStatus, Mask } from '../../model/image'
 import { SaveImageRequest } from './model/save-image-request'
+
+const SAVED_MASKS_TO_COMPLETE = 4
 
 export const saveImage = functions.region('europe-west1').https.onCall(async (data: SaveImageRequest, context) => {
   if (!context.auth) {
@@ -18,13 +20,18 @@ export const saveImage = functions.region('europe-west1').https.onCall(async (da
       const image = imageDoc.data() as Image
 
       const labellers: string[] = [...(image.labellers ?? []), labellerId]
-
       const mask: Mask = { name: maskName, uploadedBy: labellerId }
       const masks: Mask[] = [...(image.masks ?? []), mask]
+
+      const reachedSavedLimit: boolean = masks.length === SAVED_MASKS_TO_COMPLETE
+      const isCompleted: boolean = reachedSavedLimit
+      const status: ImageStatus = reachedSavedLimit ? ImageStatus.CONFIRMED_VALID : ImageStatus.IN_REVIEW
 
       transaction.update(imageRef, {
         labellers,
         masks,
+        status,
+        isCompleted,
       })
     })
 
