@@ -2,8 +2,9 @@ import * as functions from 'firebase-functions'
 import { db } from '../../index'
 import { Collections } from '../../model/collections'
 import { Image, Mask } from '../../model/image'
+import { SaveImageRequest } from './model/save-image-request'
 
-export const saveImage = functions.region('europe-west1').https.onCall(async (data, context) => {
+export const saveImage = functions.region('europe-west1').https.onCall(async (data: SaveImageRequest, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated.')
   }

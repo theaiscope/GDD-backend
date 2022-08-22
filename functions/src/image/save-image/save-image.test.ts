@@ -3,6 +3,7 @@ import * as test from 'firebase-functions-test'
 import * as functions from '../../index'
 import { Collections } from '../../model/collections'
 import { Image } from '../../model/image'
+import { SaveImageRequest } from './model/save-image-request'
 
 describe('SaveImage', () => {
   const db = admin.firestore()
@@ -24,7 +25,10 @@ describe('SaveImage', () => {
     await db.collection(Collections.IMAGES).doc(imageId).create(sampleImage)
 
     // When saveImage function is invoked
-    const requestData = { imageId: imageId, maskName: `mask_${imageId}_0.png` }
+    const requestData: SaveImageRequest = {
+      imageId: imageId,
+      maskName: `mask_${imageId}_0.png`,
+    }
     const contextOptions = { auth: { uid: labellerId } }
 
     await saveImageFunction(requestData, contextOptions)
