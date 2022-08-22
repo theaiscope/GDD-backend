@@ -67,4 +67,79 @@ describe('SaveImage', () => {
     expect(updatedImage.get('status')).toEqual(ImageStatus.CONFIRMED_VALID)
     expect(updatedImage.get('isCompleted')).toEqual(true)
   })
+
+  it('should return an error when trying to save an already completed image', async () => {
+    // Given a completed image
+    const imageId = 'image-1'
+    const sampleImage: Image = {
+      name: 'image_1.jpg',
+      isCompleted: true,
+    }
+    await db.collection(Collections.IMAGES).doc(imageId).create(sampleImage)
+
+    // When saveImage function is invoked
+    const requestData: SaveImageRequest = { imageId: imageId, maskName: `mask_${imageId}_0.png` }
+    const contextOptions = { auth: { uid: 'labeller-1' } }
+
+    // Then an error is returned
+    const expectedError = {
+      code: 'failed-precondition',
+      message: 'Image is already completed',
+    }
+
+    await expect(async () => {
+      await saveImageFunction(requestData, contextOptions)
+    }).rejects.toMatchObject(expectedError)
+  })
+
+  it('should return an error when trying to save an image already labelled by the user', async () => {
+    // Given an image labelled by the user
+    const imageId = 'image-1'
+    const userId = 'labeller-1'
+    const sampleImage: Image = {
+      name: 'image_1.jpg',
+      labellers: [userId],
+      masks: [
+        {
+          name: 'mask_image-1_0.png',
+          uploadedBy: userId,
+        },
+      ],
+      isCompleted: false,
+    }
+    await db.collection(Collections.IMAGES).doc(imageId).create(sampleImage)
+
+    // When saveImage function is invoked
+    const requestData: SaveImageRequest = { imageId: imageId, maskName: `mask_${imageId}_1.png` }
+    const contextOptions = { auth: { uid: userId } }
+
+    // Then an error is returned
+    const expectedError = {
+      code: 'failed-precondition',
+      message: 'Image is already labelled',
+    }
+
+    await expect(async () => {
+      await saveImageFunction(requestData, contextOptions)
+    }).rejects.toMatchObject(expectedError)
+  })
+
+  it('should return an error when trying to save an image that does not exist', async () => {
+    // Given an non-existing image
+    const imageId = 'image-1'
+
+    // When saveImage function is invoked
+    const requestData: SaveImageRequest = { imageId: imageId, maskName: `mask_${imageId}_0.png` }
+    const contextOptions = { auth: { uid: 'labeller-1' } }
+
+    // Then an error is returned
+    const expectedError = {
+      code: 'not-found',
+      message: 'Image not found',
+    }
+
+    await expect(async () => {
+      await saveImageFunction(requestData, contextOptions)
+    }).rejects.toMatchObject(expectedError)
+  })
 })
