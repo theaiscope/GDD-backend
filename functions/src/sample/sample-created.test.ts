@@ -1,17 +1,33 @@
+import * as admin from 'firebase-admin'
 import * as test from 'firebase-functions-test'
 import * as functions from '../index'
+import { Collections } from '../model/collections'
+import Sample from '../model/sample'
 
 describe('SampleCreated', () => {
+  const db = admin.firestore()
   const onSampleCreatedFunction = test().wrap(functions.onNewSampleCreated)
 
-  it('should execute when a new sample is created', async () => {
-    const sampleId = 'sample-1'
-    const sample = {
-      location: 'location',
-    }
-    const sampleSnapshot = test().firestore.makeDocumentSnapshot(sample, `samples/${sampleId}`)
+  beforeEach(async () => {
+    await test().firestore.clearFirestoreData({ projectId: 'aiscope-labelling-app-test' })
+  })
 
-    const result = await onSampleCreatedFunction(sampleSnapshot)
-    expect(result).toBe(`created: ${sampleId}`)
+  it('should create an Image when a new Sample is created', async () => {
+    // Given a new Sample is created
+    const sampleRefPath = `samples/sample-1`
+    const sample: Sample = {
+      location: 'location',
+      numberOfImages: 1,
+      uploadedBy: 'microscopists/microscopist-1',
+      createdOn: new Date(),
+    }
+
+    // When the onSampleCreated function is executed
+    const sampleSnapshot = test().firestore.makeDocumentSnapshot(sample, sampleRefPath)
+    await onSampleCreatedFunction(sampleSnapshot)
+
+    // Then an Image linked to the Sample should have been created
+    const imagesSnapshot = await db.collection(Collections.IMAGES).where('sampleReference', '==', sampleRefPath).get()
+    expect(imagesSnapshot.size).toBe(1)
   })
 })
