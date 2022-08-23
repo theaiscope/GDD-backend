@@ -2,7 +2,7 @@ import * as admin from 'firebase-admin'
 import * as test from 'firebase-functions-test'
 import * as functions from '../../index'
 import { Collections } from '../../model/collections'
-import { Image, ImageStatus } from '../../model/image'
+import { Image, ImageStatus, Mask } from '../../model/image'
 import { SaveValidImageRequest } from './model/save-image-request'
 
 describe('SaveValidImage', () => {
@@ -16,28 +16,38 @@ describe('SaveValidImage', () => {
   it('should set the image as saved by the labeller', async () => {
     // Given an image
     const imageId = 'image-1'
+    const maskName = `mask_${imageId}_0.png`
+    const labellerId = 'labeller-1'
+
     const sampleImage: Image = {
       name: 'image_1.jpg',
       isCompleted: false,
     }
-    const labellerId = 'labeller-1'
 
     await db.collection(Collections.IMAGES).doc(imageId).create(sampleImage)
 
     // When saveValidImage function is invoked
     const requestData: SaveValidImageRequest = {
-      imageId: imageId,
-      maskName: `mask_${imageId}_0.png`,
+      imageId,
+      maskName,
     }
     const contextOptions = { auth: { uid: labellerId } }
 
     await saveValidImageFunction(requestData, contextOptions)
 
     // Then the labeller and a new mask are added
+    const expectedLabellers: string[] = [labellerId]
+    const expectedMasks: Mask[] = [
+      {
+        name: maskName,
+        uploadedBy: `${Collections.MICROSCOPISTS}/${labellerId}`,
+      },
+    ]
+
     const updatedImage = await db.collection(Collections.IMAGES).doc(imageId).get()
 
-    expect(updatedImage.get('labellers')).toEqual([labellerId])
-    expect(updatedImage.get('masks')).toEqual([{ name: `mask_${imageId}_0.png`, uploadedBy: labellerId }])
+    expect(updatedImage.get('labellers')).toEqual(expectedLabellers)
+    expect(updatedImage.get('masks')).toEqual(expectedMasks)
   })
 
   it('should mark the image as CONFIRMED_VALID and Completed when it is saved with 4 masks', async () => {

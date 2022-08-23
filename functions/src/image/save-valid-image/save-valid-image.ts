@@ -25,7 +25,10 @@ export const saveValidImage = functions
         validateCanSaveValidImage(image, labellerId)
 
         const labellers: string[] = [...(image.labellers ?? []), labellerId]
-        const mask: Mask = { name: maskName, uploadedBy: labellerId }
+        const mask: Mask = {
+          name: maskName,
+          uploadedBy: `${Collections.MICROSCOPISTS}/${labellerId}`,
+        }
         const masks: Mask[] = [...(image.masks ?? []), mask]
 
         const reachedSavedLimit: boolean = masks.length === SAVED_MASKS_TO_COMPLETE
