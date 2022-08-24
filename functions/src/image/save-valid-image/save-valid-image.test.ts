@@ -13,7 +13,7 @@ describe('SaveValidImage', () => {
     await test().firestore.clearFirestoreData({ projectId: 'aiscope-labelling-app-test' })
   })
 
-  it('should set the image as saved by the labeller', async () => {
+  it('should set the image as saved by the labeller and add new mask', async () => {
     // Given an image
     const imageId = 'image-1'
     const maskName = `mask_${imageId}_0.png`
@@ -76,6 +76,7 @@ describe('SaveValidImage', () => {
 
     expect(updatedImage.get('status')).toEqual(ImageStatus.CONFIRMED_VALID)
     expect(updatedImage.get('isCompleted')).toEqual(true)
+    expect(updatedImage.get('masks').length).toBe(4)
   })
 
   it('should return an error when trying to save an already completed image', async () => {
