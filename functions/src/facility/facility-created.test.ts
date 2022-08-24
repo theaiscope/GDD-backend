@@ -2,13 +2,14 @@ import * as admin from 'firebase-admin'
 import * as test from 'firebase-functions-test'
 import * as functions from '../index'
 import { Collections } from '../model/collections'
+import { test as config } from '../config.json'
 
 describe('FacilityCreated', () => {
   const db = admin.firestore()
   const onFacilityCreatedFunction = test().wrap(functions.onNewFacilityCreated)
 
   beforeEach(async () => {
-    await test().firestore.clearFirestoreData({ projectId: 'aiscope-labelling-app-test' })
+    await test().firestore.clearFirestoreData(config.testProjectId)
   })
 
   it('should initialize microscopists when creating a new facility without microscopists', async () => {
