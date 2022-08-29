@@ -4,19 +4,36 @@ import { Collections } from '../model/collections'
 import { Image, ImageStatus } from '../model/image'
 import { mapDocumentToSample } from '../model/mapper/sample-mapper'
 import Sample from '../model/sample'
+import DocumentReference = FirebaseFirestore.DocumentReference
+import DocumentSnapshot = FirebaseFirestore.DocumentSnapshot
 
 export const onNewSampleCreated = functions
   .region('europe-west1')
   .firestore.document('samples/{sample}')
   .onCreate(async (snapshot) => createImageFromSample(snapshot))
 
-const createImageFromSample = async (sampleSnapshot: FirebaseFirestore.DocumentSnapshot) => {
+const createImageFromSample = async (sampleSnapshot: DocumentSnapshot): Promise<DocumentReference[]> => {
   const sample: Sample = mapDocumentToSample(sampleSnapshot)
 
+  const createPromises: Promise<DocumentReference>[] = []
+  for (let imageIndex = 0; imageIndex < sample.numberOfImages; imageIndex++) {
+    createPromises.push(createImage(imageIndex, sample, sampleSnapshot.ref))
+  }
+
+  return Promise.all(createPromises)
+}
+
+const createImage = async (
+  imageIndex: number,
+  sample: Sample,
+  sampleReference: DocumentReference,
+): Promise<DocumentReference> => {
+  const imageName = `image_${imageIndex}.jpg`
+
   const imageToCreate: Image = {
-    name: 'image_0.jpg',
+    name: imageName,
     sampleLocation: sample.location,
-    sampleReference: sampleSnapshot.ref.path,
+    sampleReference: sampleReference.path,
     masks: [
       {
         name: 'mask_0.png',
@@ -32,6 +49,7 @@ const createImageFromSample = async (sampleSnapshot: FirebaseFirestore.DocumentS
     .collection(Collections.IMAGES)
     .add(imageToCreate)
     .then((value) => {
-      functions.logger.log(`Image created successfully (path: ${value.path})`)
+      functions.logger.log(`Image (${value.path}) created from Sample (${sample.id})`)
+      return value
     })
 }
