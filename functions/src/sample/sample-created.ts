@@ -18,7 +18,8 @@ const createImageFromSample = async (sampleSnapshot: DocumentSnapshot): Promise<
 
   const createPromises: Promise<DocumentReference>[] = []
   for (let imageIndex = 0; imageIndex < sample.numberOfImages; imageIndex++) {
-    createPromises.push(createImage(imageIndex, sample, sampleSnapshot.ref))
+    const createPromise = createImage(imageIndex, sample, sampleSnapshot.ref)
+    createPromises.push(createPromise)
   }
 
   return Promise.all(createPromises)
