@@ -4,11 +4,12 @@ import { Collections } from '../model/collections'
 import { Image, ImageStatus } from '../model/image'
 import { mapDocumentToSample } from '../model/mapper/sample-mapper'
 import Sample from '../model/sample'
+import * as config from '../config.json'
 import DocumentReference = FirebaseFirestore.DocumentReference
 import DocumentSnapshot = FirebaseFirestore.DocumentSnapshot
 
 export const onNewSampleCreated = functions
-  .region('europe-west1')
+  .region(config.functionsRegion)
   .firestore.document('samples/{sample}')
   .onCreate(async (snapshot) => createImageFromSample(snapshot))
 

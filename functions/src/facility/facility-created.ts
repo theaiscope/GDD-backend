@@ -1,12 +1,13 @@
 import * as functions from 'firebase-functions'
 import { Collections } from '../model/collections'
 import { db } from '../index'
+import * as config from '../config.json'
 
 const DEFAULT_FACILITY_NAME = '___NAME HERE___'
 const DEFAULT_FACILITY_MICROSCOPISTS: string[] = []
 
 export const onNewFacilityCreated = functions
-  .region('europe-west1')
+  .region(config.functionsRegion)
   .firestore.document('facilities/{facility}')
   .onCreate(async (snapshot) => addInitialValues(snapshot))
 

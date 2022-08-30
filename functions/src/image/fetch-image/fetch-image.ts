@@ -4,8 +4,9 @@ import { Collections } from '../../model/collections'
 import { Image } from '../../model/image'
 import { mapDocumentToImage } from '../../model/mapper/image-mapper'
 import { CREATED_ON, IS_COMPLETED } from './query-constants'
+import * as config from '../../config.json'
 
-export const fetchImageToLabel = functions.region('europe-west1').https.onCall(async (_data, context) => {
+export const fetchImageToLabel = functions.region(config.functionsRegion).https.onCall(async (_, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated.')
   }
