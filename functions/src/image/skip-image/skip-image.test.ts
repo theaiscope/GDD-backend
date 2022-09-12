@@ -3,13 +3,14 @@ import * as test from 'firebase-functions-test'
 import * as functions from '../../index'
 import { Collections } from '../../model/collections'
 import { Image } from '../../model/image'
+import { test as config } from '../../config.json'
 
 describe('Skip image action', () => {
   const db = admin.firestore()
   const skipImageFunction = test().wrap(functions.skipImage)
 
   beforeEach(async () => {
-    await test().firestore.clearFirestoreData({ projectId: 'aiscope-labelling-app-test' })
+    await test().firestore.clearFirestoreData(config.testProjectId)
   })
 
   it('should mark the image as skipped by the labeller, when the skip action is invoked', async () => {

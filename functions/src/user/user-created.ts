@@ -2,10 +2,11 @@ import * as admin from 'firebase-admin'
 import * as functions from 'firebase-functions'
 import { Collections } from '../model/collections'
 import { db } from '../index'
+import * as config from '../config.json'
 import UserRecord = admin.auth.UserRecord
 
 export const onNewUserCreated = functions
-  .region('europe-west1')
+  .region(config.functionsRegion)
   .auth.user()
   .onCreate(async (user) => {
     return saveMicroscopistToFirestore(user).catch((error) => {

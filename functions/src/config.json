@@ -1,0 +1,6 @@
+{
+  "functionsRegion": "europe-west1",
+  "test": {
+    "testProjectId": "aiscope-labelling-app-test"
+  }
+}

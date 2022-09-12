@@ -3,11 +3,12 @@ import { db } from '../../index'
 import { Collections } from '../../model/collections'
 import { Image, ImageStatus, Mask } from '../../model/image'
 import { SaveValidImageRequest } from './model/save-image-request'
+import * as config from '../../config.json'
 
 const SAVED_MASKS_TO_COMPLETE = 4
 
 export const saveValidImage = functions
-  .region('europe-west1')
+  .region(config.functionsRegion)
   .https.onCall(async (data: SaveValidImageRequest, context) => {
     if (!context.auth) {
       throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated.')

@@ -2,10 +2,11 @@ import * as functions from 'firebase-functions'
 import { db } from '../../index'
 import { Collections } from '../../model/collections'
 import { Image, ImageStatus } from '../../model/image'
+import * as config from '../../config.json'
 
 const MARK_AS_INVALID_LIMIT_TO_COMPLETE = 3
 
-export const markImageInvalid = functions.region('europe-west1').https.onCall(async (data, context) => {
+export const markImageInvalid = functions.region(config.functionsRegion).https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated.')
   }

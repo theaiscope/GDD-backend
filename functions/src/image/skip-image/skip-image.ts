@@ -2,8 +2,9 @@ import * as functions from 'firebase-functions'
 import { db } from '../../index'
 import { Collections } from '../../model/collections'
 import { Image } from '../../model/image'
+import * as config from '../../config.json'
 
-export const skipImage = functions.region('europe-west1').https.onCall(async (data, context) => {
+export const skipImage = functions.region(config.functionsRegion).https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated.')
   }

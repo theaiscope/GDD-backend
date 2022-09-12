@@ -3,6 +3,7 @@ import * as test from 'firebase-functions-test'
 import { Collections } from '../../model/collections'
 import * as functions from '../../index'
 import { Image } from '../../model/image'
+import { test as config } from '../../config.json'
 
 describe('FetchImage', () => {
   const db = admin.firestore()
@@ -12,7 +13,7 @@ describe('FetchImage', () => {
   const fetchImageFunction = test().wrap(functions.fetchImageToLabel)
 
   beforeEach(async () => {
-    await test().firestore.clearFirestoreData({ projectId: 'aiscope-labelling-app-test' })
+    await test().firestore.clearFirestoreData(config.testProjectId)
   })
 
   it('should not return an image when there is no image', async () => {
