@@ -9,7 +9,3 @@ updates:
     directory: "/functions/"
     schedule:
       interval: "monthly"
-    labels:
-      - "npm"
-      - "dependabot"
-      - "dependencies"
