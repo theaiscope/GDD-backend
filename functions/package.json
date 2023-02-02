@@ -16,7 +16,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "firebase-admin": "^11.4.1",
+    "firebase-admin": "^11.5.0",
     "firebase-functions": "^4.2.0"
   },
   "devDependencies": {
@@ -27,7 +27,7 @@
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-prettier": "^4.2.1",
     "firebase-functions-test": "^3.0.0",
-    "firebase-tools": "^11.16.0",
+    "firebase-tools": "^11.22.0",
     "jest": "^29.4.1",
     "prettier": "2.8.3",
     "ts-jest": "^29.0.5",
