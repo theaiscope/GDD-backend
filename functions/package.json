@@ -12,7 +12,7 @@
     "test:watch": "tsc && firebase emulators:exec --ui --project aiscope-labelling-app-test 'jest --detectOpenHandles --forceExit --watchAll=true'"
   },
   "engines": {
-    "node": "16"
+    "node": "20"
   },
   "main": "lib/index.js",
   "dependencies": {
